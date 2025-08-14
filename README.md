@@ -72,10 +72,10 @@ pip install scikit-image
 
 ```bash
 # Train with default configuration
-python train.py
+python scripts/train.py
 
 # Train with custom config
-python train.py --config configs/example_cracksegmenter.yaml
+python scripts/train.py --config configs/example_cracksegmenter.yaml
 ```
 
 ### 2. Evaluation
@@ -98,7 +98,7 @@ python examples/validation_metrics_example.py
 
 ```bash
 # Set baseline=True in config.yaml and specify architecture
-python train.py
+python scripts/train.py
 ```
 
 ### 3. Inference
