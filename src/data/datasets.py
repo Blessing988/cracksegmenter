@@ -85,9 +85,8 @@ class CrackDataset(Dataset):
         img_name = self.image_files[idx]
         img_path = os.path.join(self.images_dir, img_name)
         
-        # Load mask (same name with different extension)
-        mask_name = os.path.splitext(img_name)[0] + self.mask_ext
-        mask_path = os.path.join(self.masks_dir, mask_name)
+        # Try to find matching mask file with flexible extension matching
+        mask_path = self._find_mask_file(img_name)
         
         # Load image and mask
         image = Image.open(img_path).convert('RGB')
@@ -108,6 +107,68 @@ class CrackDataset(Dataset):
             mask = torch.from_numpy(mask).unsqueeze(0).float() / 255.0
         
         return image, mask
+    
+    def _find_mask_file(self, img_name: str) -> str:
+        """
+        Find the corresponding mask file for a given image file.
+        Tries multiple strategies to find the matching mask.
+        
+        Args:
+            img_name (str): Name of the image file
+            
+        Returns:
+            str: Path to the mask file
+            
+        Raises:
+            FileNotFoundError: If no matching mask file is found
+        """
+        img_base = os.path.splitext(img_name)[0]
+        
+        # Strategy 1: Try exact same name with mask extension
+        mask_name = img_base + self.mask_ext
+        mask_path = os.path.join(self.masks_dir, mask_name)
+        if os.path.exists(mask_path):
+            return mask_path
+        
+        # Strategy 2: Try with different extensions
+        for ext in ['.png', '.jpg', '.jpeg', '.bmp', '.tif', '.tiff']:
+            mask_name = img_base + ext
+            mask_path = os.path.join(self.masks_dir, mask_name)
+            if os.path.exists(mask_path):
+                return mask_path
+        
+        # Strategy 3: Try with common mask naming patterns
+        # Remove common prefixes/suffixes that might be different
+        patterns = [
+            img_base,
+            img_base.replace('image_', 'mask_'),
+            img_base.replace('img_', 'mask_'),
+            img_base.replace('_image', '_mask'),
+            img_base.replace('_img', '_mask'),
+        ]
+        
+        for pattern in patterns:
+            for ext in ['.png', '.jpg', '.jpeg', '.bmp', '.tif', '.tiff']:
+                mask_name = pattern + ext
+                mask_path = os.path.join(self.masks_dir, mask_name)
+                if os.path.exists(mask_path):
+                    return mask_path
+        
+        # Strategy 4: List all mask files and try to find the best match
+        if os.path.exists(self.masks_dir):
+            mask_files = os.listdir(self.masks_dir)
+            # Try to find mask file that contains the image base name
+            for mask_file in mask_files:
+                if img_base in mask_file or mask_file in img_base:
+                    mask_path = os.path.join(self.masks_dir, mask_file)
+                    return mask_path
+        
+        # If all strategies fail, raise an error
+        raise FileNotFoundError(
+            f"No matching mask file found for image: {img_name}\n"
+            f"Looked in: {self.masks_dir}\n"
+            f"Image base name: {img_base}"
+        )
 
 
 class CrackTree200Dataset(CrackDataset):
