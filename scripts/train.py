@@ -25,9 +25,10 @@ sys.path.append(str(Path(__file__).parent.parent / 'src'))
 
 from models import create_model
 from data.loaders import create_dataloaders
-from training.losses import get_loss_function
+from training.losses import get_loss_function, loss_ce, loss_inter, loss_intra, BinaryDiceLoss
 from training.metrics import evaluate_metrics, print_metrics
 from utils.config import load_config, save_config
+from utils.mask_utils import create_mask
 
 
 def setup_logging(log_dir: str):
@@ -136,12 +137,11 @@ def validate_baseline(model, dataloader, criterion, device, num_classes=1, confi
     return epoch_loss, avg_metrics
 
 
-def train_one_epoch_cracksegmenter(model, dataloader, criterion, optimizer, device,
-                            num_classes=1):
+def train_one_epoch_cracksegmenter(model, dataloader, optimizer, device, num_classes=1):
     """Train one epoch for CrackSegmenter models."""
     model.train()
     epoch_loss = 0
-    metrics = {'IoU': [], 'Dice': [], 'Precision': [], 'Recall': [], 'F1 Score': []}
+    metrics = {'IoU': [], 'Dice': [], 'Precision': [], 'Recall': [], 'F1 Score': [], 'HM Score': [], 'XOR Score': []}
     
     progress_bar = tqdm(dataloader, desc="Training")
     
@@ -153,26 +153,55 @@ def train_one_epoch_cracksegmenter(model, dataloader, criterion, optimizer, devi
         
         # Forward pass (CrackSegmenter returns multiple outputs)
         outputs = model(images)
-        if isinstance(outputs, tuple):
-            main_output = outputs[0]  # Main prediction
+        
+        # Handle varying number of outputs (matching your original implementation)
+        if isinstance(outputs, tuple) and len(outputs) == 8:
+            output, att_score, attention_map_f, attention_map_s, attention_map_l, context_f, context_s, context_l = outputs
         else:
-            main_output = outputs
-            
-        main_output = main_output.squeeze(1)
-        loss = criterion(main_output, masks.float())
+            output = outputs[0] if isinstance(outputs, tuple) else outputs
+            att_score, context_f, context_s, context_l = None, None, None, None
+        
+        B, C, H, W = output.shape
+        target = output.argmax(dim=1)  # Use argmax for multi-class output
+        
+        # Compute CE loss (matching your original implementation)
+        ce_loss = loss_ce(output, target)
+        
+        # Compute additional losses if available
+        total_inter_loss = 0
+        total_intra_loss = 0
+        if att_score is not None and context_f is not None:
+            for i in range(B):
+                if context_s is not None and context_l is not None:
+                    inter_fs = loss_inter(context_f[i], context_s[i], torch.tensor([1]).to(device))
+                    inter_sl = loss_inter(context_s[i], context_l[i], torch.tensor([1]).to(device))
+                    total_inter_loss += 1.5 * (inter_fs + inter_sl)
+                if att_score is not None:
+                    L = att_score.size(-1)
+                    total_intra_loss += 1.3 * loss_intra(att_score[i], torch.eye(L, device=device))
+            total_inter_loss /= B
+            total_intra_loss /= B
+        
+        loss = ce_loss + total_inter_loss + total_intra_loss
         
         # Backward pass
         loss.backward()
         optimizer.step()
 
-        # Calculate metrics
-        preds = torch.sigmoid(main_output) > 0.5
-        batch_metrics = evaluate_metrics(preds.cpu(), masks.cpu(), num_classes)
+        epoch_loss += loss.item() * images.size(0)
         
+        # Calculate metrics (matching your original implementation)
+        batch_metrics_list = []
+        for i in range(B):
+            current_pred = target[i]
+            current_mask = masks[i]
+            current_pred_mask = create_mask(current_pred, current_mask, restrict_to_gt=True)
+            image_metrics = evaluate_metrics(current_pred_mask, current_mask, num_classes)
+            batch_metrics_list.append(image_metrics)
+        
+        batch_metrics = {key: np.mean([m[key] for m in batch_metrics_list]) for key in batch_metrics_list[0].keys()}
         for key in metrics:
             metrics[key].append(batch_metrics[key])
-
-        epoch_loss += loss.item() * images.size(0)
         
         # Update progress bar
         progress_bar.set_postfix({
@@ -183,14 +212,14 @@ def train_one_epoch_cracksegmenter(model, dataloader, criterion, optimizer, devi
     epoch_loss /= len(dataloader.dataset)
     avg_metrics = {key: np.nanmean(metrics[key]) for key in metrics}
 
-    return epoch_loss, avg_metrics
+    return epoch_loss, list(avg_metrics.values())
 
 
-def validate_cracksegmenter(model, dataloader, criterion, device, num_classes=1):
+def validate_cracksegmenter(model, dataloader, device, num_classes=1):
     """Validate CrackSegmenter models."""
     model.eval()
     epoch_loss = 0
-    metrics = {'IoU': [], 'Dice': [], 'Precision': [], 'Recall': [], 'F1 Score': []}
+    metrics = {'IoU': [], 'Dice': [], 'Precision': [], 'Recall': [], 'F1 Score': [], 'HM Score': [], 'XOR Score': []}
 
     with torch.no_grad():
         progress_bar = tqdm(dataloader, desc="Validation")
@@ -201,22 +230,51 @@ def validate_cracksegmenter(model, dataloader, criterion, device, num_classes=1)
 
             # Forward pass
             outputs = model(images)
-            if isinstance(outputs, tuple):
-                main_output = outputs[0]
+            
+            # Handle varying number of outputs (matching your original implementation)
+            if isinstance(outputs, tuple) and len(outputs) == 8:
+                output, att_score, attention_map_f, attention_map_s, attention_map_l, context_f, context_s, context_l = outputs
             else:
-                main_output = outputs
-                
-            main_output = main_output.squeeze(1)
-            loss = criterion(main_output, masks.float())
+                output = outputs[0] if isinstance(outputs, tuple) else outputs
+                att_score, context_f, context_s, context_l = None, None, None, None
             
-            # Calculate metrics
-            preds = torch.sigmoid(main_output) > 0.5
-            batch_metrics = evaluate_metrics(preds.cpu(), masks.cpu(), num_classes)
+            B, C, H, W = output.shape
+            target = output.argmax(dim=1)  # Use argmax for multi-class output
             
+            # Compute CE loss (matching your original implementation)
+            ce_loss = loss_ce(output, target)
+            
+            # Compute additional losses if available
+            total_inter_loss = 0
+            total_intra_loss = 0
+            if att_score is not None and context_f is not None:
+                for i in range(B):
+                    if context_s is not None and context_l is not None:
+                        inter_fs = loss_inter(context_f[i], context_s[i], torch.tensor([1]).to(device))
+                        inter_sl = loss_inter(context_s[i], context_l[i], torch.tensor([1]).to(device))
+                        total_inter_loss += 1.5 * (inter_fs + inter_sl)
+                    if att_score is not None:
+                        L = att_score.size(-1)
+                        total_intra_loss += 1.3 * loss_intra(att_score[i], torch.eye(L, device=device))
+                total_inter_loss /= B
+                total_intra_loss /= B
+            
+            loss = ce_loss + total_inter_loss + total_intra_loss
+            
+            epoch_loss += loss.item() * images.size(0)
+            
+            # Calculate metrics (matching your original implementation)
+            batch_metrics_list = []
+            for i in range(B):
+                current_pred = target[i]
+                current_mask = masks[i]
+                current_pred_mask = create_mask(current_pred, current_mask, restrict_to_gt=True)
+                image_metrics = evaluate_metrics(current_pred_mask, current_mask, num_classes)
+                batch_metrics_list.append(image_metrics)
+            
+            batch_metrics = {key: np.mean([m[key] for m in batch_metrics_list]) for key in batch_metrics_list[0].keys()}
             for key in metrics:
                 metrics[key].append(batch_metrics[key])
-
-            epoch_loss += loss.item() * images.size(0)
             
             # Update progress bar
             progress_bar.set_postfix({
@@ -227,7 +285,7 @@ def validate_cracksegmenter(model, dataloader, criterion, device, num_classes=1)
     epoch_loss /= len(dataloader.dataset)
     avg_metrics = {key: np.nanmean(metrics[key]) for key in metrics}
 
-    return epoch_loss, avg_metrics
+    return epoch_loss, list(avg_metrics.values())
 
 
 def save_checkpoint(model, optimizer, scheduler, epoch, best_val_loss, 
@@ -355,7 +413,7 @@ def main():
             )
         else:
             train_loss, train_metrics = train_one_epoch_cracksegmenter(
-                model, train_loader, criterion, optimizer, device,
+                model, train_loader, optimizer, device,
                 config['model']['num_classes']
             )
         
@@ -367,7 +425,7 @@ def main():
             )
         else:
             val_loss, val_metrics = validate_cracksegmenter(
-                model, val_loader, criterion, device,
+                model, val_loader, device,
                 config['model']['num_classes']
             )
         

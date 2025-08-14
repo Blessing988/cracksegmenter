@@ -100,66 +100,22 @@ class CombinedLoss(nn.Module):
         return combined_loss
 
 
-def loss_ce(pred: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
-    """
-    Cross-entropy loss for binary segmentation.
-    
-    Args:
-        pred (torch.Tensor): Predicted logits
-        target (torch.Tensor): Ground truth masks
-        
-    Returns:
-        torch.Tensor: CE loss value
-    """
-    return F.binary_cross_entropy_with_logits(pred, target)
+def loss_ce(output, target):
+    """Cross-entropy loss for multi-class segmentation."""
+    return F.cross_entropy(output, target)
 
 
-def loss_inter(pred: torch.Tensor, target: torch.Tensor, 
-               attention_maps: Optional[torch.Tensor] = None) -> torch.Tensor:
-    """
-    Inter-class loss for MSFormer training.
-    
-    Args:
-        pred (torch.Tensor): Predicted logits
-        target (torch.Tensor): Ground truth masks
-        attention_maps (torch.Tensor, optional): Attention maps for guided loss
-        
-    Returns:
-        torch.Tensor: Inter-class loss value
-    """
-    # Basic inter-class loss (can be enhanced with attention guidance)
-    ce_loss = loss_ce(pred, target)
-    
-    if attention_maps is not None:
-        # Apply attention-guided loss if available
-        attention_loss = torch.mean(attention_maps) * ce_loss
-        return ce_loss + 0.1 * attention_loss
-    
-    return ce_loss
+def loss_inter(context_f, context_s, weight):
+    """Inter-scale loss between fine and small contexts."""
+    return F.mse_loss(context_f, context_s) * weight
 
 
-def loss_intra(pred: torch.Tensor, target: torch.Tensor,
-               features: Optional[torch.Tensor] = None) -> torch.Tensor:
-    """
-    Intra-class loss for MSFormer training.
-    
-    Args:
-        pred (torch.Tensor): Predicted logits
-        target (torch.Tensor): Ground truth masks
-        features (torch.Tensor, optional): Feature maps for consistency loss
-        
-    Returns:
-        torch.Tensor: Intra-class loss value
-    """
-    # Basic intra-class loss (can be enhanced with feature consistency)
-    ce_loss = loss_ce(pred, target)
-    
-    if features is not None:
-        # Feature consistency loss
-        consistency_loss = torch.mean(torch.var(features, dim=1))
-        return ce_loss + 0.05 * consistency_loss
-    
-    return ce_loss
+def loss_intra(att_score, identity):
+    """Intra-scale loss for attention scores."""
+    return F.mse_loss(att_score, identity)
+
+
+
 
 
 class FocalLoss(nn.Module):
