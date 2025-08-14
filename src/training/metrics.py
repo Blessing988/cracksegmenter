@@ -92,9 +92,15 @@ def calculate_precision_recall(pred: torch.Tensor, target: torch.Tensor,
     pred_flat = pred_binary.view(-1).cpu().numpy()
     target_flat = target.view(-1).cpu().numpy()
     
+    # Ensure binary classification
+    if len(np.unique(pred_flat)) > 2 or len(np.unique(target_flat)) > 2:
+        # Convert to binary: any non-zero value becomes 1
+        pred_flat = (pred_flat > 0).astype(int)
+        target_flat = (target_flat > 0).astype(int)
+    
     # Calculate precision and recall
-    precision = precision_score(target_flat, pred_flat, zero_division=0)
-    recall = recall_score(target_flat, pred_flat, zero_division=0)
+    precision = precision_score(target_flat, pred_flat, zero_division=0, average='binary')
+    recall = recall_score(target_flat, pred_flat, zero_division=0, average='binary')
     
     return precision, recall
 
@@ -250,8 +256,14 @@ def calculate_f1_score(pred: torch.Tensor, target: torch.Tensor,
     pred_flat = pred_binary.view(-1).cpu().numpy()
     target_flat = target.view(-1).cpu().numpy()
     
+    # Ensure binary classification
+    if len(np.unique(pred_flat)) > 2 or len(np.unique(target_flat)) > 2:
+        # Convert to binary: any non-zero value becomes 1
+        pred_flat = (pred_flat > 0).astype(int)
+        target_flat = (target_flat > 0).astype(int)
+    
     # Calculate F1-Score
-    f1 = f1_score(target_flat, pred_flat, zero_division=0)
+    f1 = f1_score(target_flat, pred_flat, zero_division=0, average='binary')
     
     return f1
 
