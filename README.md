@@ -391,7 +391,7 @@ Use `configs/validation_metrics_config.yaml` to configure:
 - File extensions and evaluation settings
 - Output directory and logging options
 
-
+<!--
 ### Development Setup
 
 ```bash
@@ -414,7 +414,6 @@ black src/ scripts/
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-<!--
 ## 🙏 Acknowledgments
 
 - Original paper authors for the foundational research
