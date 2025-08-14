@@ -441,7 +441,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Maintainer**: [Blessing Agyei Kyem](mailto:your.email@example.com)
 - **Project Link**: [https://github.com/Blessing988/cracksegmenter](https://github.com/Blessing988/cracksegmenter)
-- **Issues**: [GitHub Issues](https://github.com/yourusername/cracksegmenter/issues)
+- **Issues**: [GitHub Issues](https://github.com/Blessing988/cracksegmenter/issues)
 
 ## 📚 Citation
 
