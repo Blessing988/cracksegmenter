@@ -42,7 +42,7 @@ A state-of-the-art self-supervised crack segmentation framework that leverages m
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/cracksegmenter.git
+git clone https://github.com/Blessing988/cracksegmenter.git
 cd cracksegmenter
 
 # Create virtual environment
