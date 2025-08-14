@@ -39,13 +39,13 @@ class CrackDataset(Dataset):
         
         # Setup paths - handle both flat and subdirectory structures
         if dataset_subdir:
-            # Subdirectory structure: root_dir/dataset_name/images/split
-            self.images_dir = os.path.join(root_dir, dataset_subdir, 'images', split)
-            self.masks_dir = os.path.join(root_dir, dataset_subdir, 'masks', split)
+            # Subdirectory structure: root_dir/dataset_name/split/images
+            self.images_dir = os.path.join(root_dir, dataset_subdir, split, 'images')
+            self.masks_dir = os.path.join(root_dir, dataset_subdir, split, 'masks')
         else:
-            # Flat structure: root_dir/images/split
-            self.images_dir = os.path.join(root_dir, 'images', split)
-            self.masks_dir = os.path.join(root_dir, 'masks', split)
+            # Flat structure: root_dir/split/images
+            self.images_dir = os.path.join(root_dir, split, 'images')
+            self.masks_dir = os.path.join(root_dir, split, 'masks')
         
         # Get file list
         self.image_files = self._get_image_files()
@@ -125,8 +125,8 @@ class CrackTree200Dataset(CrackDataset):
     def _validate_dataset(self):
         """Validate CrackTree200 dataset structure."""
         expected_dirs = [
-            os.path.join(self.root_dir, 'images', self.split),
-            os.path.join(self.root_dir, 'masks', self.split)
+            os.path.join(self.root_dir, self.split, 'images'),
+            os.path.join(self.root_dir, self.split, 'masks')
         ]
         
         for dir_path in expected_dirs:
