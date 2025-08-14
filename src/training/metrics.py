@@ -99,6 +99,137 @@ def calculate_precision_recall(pred: torch.Tensor, target: torch.Tensor,
     return precision, recall
 
 
+def calculate_hm_score(pred: torch.Tensor, target: torch.Tensor,
+                      threshold: float = 0.5) -> float:
+    """
+    Calculate HM (Hamming-like) score for segmentation masks.
+    HM score = (union - intersection) / union
+    
+    Args:
+        pred (torch.Tensor): Predicted probabilities [B, 1, H, W]
+        target (torch.Tensor): Ground truth masks [B, 1, H, W]
+        threshold (float): Threshold for binary prediction
+        
+    Returns:
+        float: HM score value
+    """
+    # Convert to binary predictions
+    pred_binary = (pred > threshold).float()
+    
+    # Convert to numpy for calculation
+    pred_flat = pred_binary.view(-1).cpu().numpy()
+    target_flat = target.view(-1).cpu().numpy()
+    
+    # Calculate intersection and union
+    intersection = np.sum(pred_flat * target_flat)
+    union = np.sum(np.logical_or(pred_flat, target_flat))
+    
+    # Avoid division by zero
+    if union == 0:
+        return 0.0
+    
+    hm_score = (union - intersection) / union
+    return hm_score
+
+
+def calculate_xor_score(pred: torch.Tensor, target: torch.Tensor,
+                       threshold: float = 0.5) -> float:
+    """
+    Calculate XOR score for segmentation masks.
+    XOR score = (union - intersection) / sum(ground_truth)
+    
+    Args:
+        pred (torch.Tensor): Predicted probabilities [B, 1, H, W]
+        target (torch.Tensor): Ground truth masks [B, 1, H, W]
+        threshold (float): Threshold for binary prediction
+        
+    Returns:
+        float: XOR score value
+    """
+    # Convert to binary predictions
+    pred_binary = (pred > threshold).float()
+    
+    # Convert to numpy for calculation
+    pred_flat = pred_binary.view(-1).cpu().numpy()
+    target_flat = target.view(-1).cpu().numpy()
+    
+    # Calculate intersection, union, and ground truth sum
+    intersection = np.sum(pred_flat * target_flat)
+    union = np.sum(np.logical_or(pred_flat, target_flat))
+    gt_sum = np.sum(target_flat)
+    
+    # Avoid division by zero
+    if gt_sum == 0:
+        return 0.0
+    
+    xor_score = (union - intersection) / gt_sum
+    return xor_score
+
+
+def dice_metric(A: np.ndarray, B: np.ndarray) -> float:
+    """
+    Calculate Dice coefficient between two numpy arrays.
+    
+    Args:
+        A (np.ndarray): First binary array
+        B (np.ndarray): Second binary array
+        
+    Returns:
+        float: Dice coefficient
+    """
+    intersect = np.sum(A * B)
+    fsum = np.sum(A)
+    ssum = np.sum(B)
+    
+    if fsum + ssum == 0:
+        return 1.0 if intersect == 0 else 0.0
+    
+    dice = (2 * intersect) / (fsum + ssum)
+    return dice
+
+
+def hm_metric(A: np.ndarray, B: np.ndarray) -> float:
+    """
+    Calculate HM (Hamming-like) metric between two numpy arrays.
+    
+    Args:
+        A (np.ndarray): First binary array
+        B (np.ndarray): Second binary array
+        
+    Returns:
+        float: HM score
+    """
+    intersection = A * B
+    union = np.logical_or(A, B)
+    
+    if np.sum(union) == 0:
+        return 0.0
+    
+    hm_score = (np.sum(union) - np.sum(intersection)) / np.sum(union)
+    return hm_score
+
+
+def xor_metric(A: np.ndarray, GT: np.ndarray) -> float:
+    """
+    Calculate XOR metric between prediction and ground truth.
+    
+    Args:
+        A (np.ndarray): Prediction binary array
+        GT (np.ndarray): Ground truth binary array
+        
+    Returns:
+        float: XOR score
+    """
+    intersection = A * GT
+    union = np.logical_or(A, GT)
+    
+    if np.sum(GT) == 0:
+        return 0.0
+    
+    xor_score = (np.sum(union) - np.sum(intersection)) / np.sum(GT)
+    return xor_score
+
+
 def calculate_f1_score(pred: torch.Tensor, target: torch.Tensor,
                       threshold: float = 0.5) -> float:
     """
@@ -311,11 +442,11 @@ def evaluate_metrics(pred: torch.Tensor, target: torch.Tensor,
     
     # New metrics
     try:
-        metrics['XOR'] = calculate_xor_metric(pred, target, threshold)
-        metrics['HM'] = calculate_hm_metric(pred, target, threshold)
+        metrics['XOR Score'] = calculate_xor_score(pred, target, threshold)
+        metrics['HM Score'] = calculate_hm_score(pred, target, threshold)
     except:
-        metrics['XOR'] = 0.0
-        metrics['HM'] = 0.0
+        metrics['XOR Score'] = 0.0
+        metrics['HM Score'] = 0.0
     
     return metrics
 
@@ -355,9 +486,49 @@ def evaluate_batch_metrics(pred: torch.Tensor, target: torch.Tensor,
     return metrics
 
 
-def save_metrics(metrics: Dict[str, float], filepath: str):
+def save_metrics(epoch, train_loss, train_metrics, val_loss, val_metrics, output_csv):
     """
-    Save metrics to a file.
+    Save training and validation metrics to CSV file.
+    
+    Args:
+        epoch (int): Current epoch number
+        train_loss (float): Training loss
+        train_metrics (list): List of training metrics [IoU, Dice, Precision, Recall, F1, HM, XOR]
+        val_loss (float): Validation loss
+        val_metrics (list): List of validation metrics [IoU, Dice, Precision, Recall, F1, HM, XOR]
+        output_csv (str): Path to output CSV file
+    """
+    import csv
+    import os
+    
+    # Create the directory if it doesn't exist
+    output_dir = os.path.dirname(output_csv)
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    # Convert tensors to scalar values using .item()
+    train_metrics = [m.item() if isinstance(m, torch.Tensor) else m for m in train_metrics]
+    val_metrics = [m.item() if isinstance(m, torch.Tensor) else m for m in val_metrics]
+
+    # Check if the CSV file exists, if not, write the header
+    file_exists = os.path.isfile(output_csv)
+    with open(output_csv, 'a', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        if not file_exists:
+            # Write the header row - updated to include HM and XOR scores
+            header = [
+                'Epoch',
+                'Train Loss', 'Train IoU', 'Train Dice Score', 'Train Precision', 'Train Recall', 'Train F1 score', 'Train HM Score', 'Train XOR Score',
+                'Val Loss', 'Val IoU', 'Val Dice Score', 'Val Precision', 'Val Recall', 'Val F1 score', 'Val HM Score', 'Val XOR Score'
+            ]
+            writer.writerow(header)
+        # Write the metrics row
+        writer.writerow([epoch] + [train_loss] + train_metrics + [val_loss] + val_metrics)
+
+
+def save_metrics_dict(metrics: Dict[str, float], filepath: str):
+    """
+    Save metrics dictionary to a JSON file.
     
     Args:
         metrics (Dict[str, float]): Dictionary of metrics

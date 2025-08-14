@@ -440,6 +440,10 @@ def main():
         logging.info("Val Metrics:")
         print_metrics(val_metrics, "Validation Metrics")
         
+        # Save metrics to CSV
+        metrics_csv_path = os.path.join(save_dir, 'training_metrics.csv')
+        save_metrics(epoch + 1, train_loss, train_metrics, val_loss, val_metrics, metrics_csv_path)
+        
         # Save best model
         if val_loss < best_val_loss:
             best_val_loss = val_loss
