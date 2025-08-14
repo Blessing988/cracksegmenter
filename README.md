@@ -1,4 +1,4 @@
-# CrackSegmenter: Self-Supervised Crack Segmentation with Multi-Scale Feature Fusion
+# CrackSegmenter: Self-Supervised Multi-Scale Transformer with Attention-Guided Fusion for Efficient Crack Detection
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-1.9+-red.svg)](https://pytorch.org/)
@@ -147,59 +147,6 @@ data:
   dataset_name: 'cracktree200'  # cracktree200, cfd, forest, gaps_384
   num_workers: 4
   mask_ext: '.png'
-```
-
-## 📁 Project Structure
-
-```
-cracksegmenter/
-├── configs/                     # Configuration files for different experiments
-│   ├── cracktree200_cracksegmenter_sae_agf.yaml
-│   ├── cfd_cracksegmenter_v1.yaml
-│   ├── example_baseline.yaml   # Example baseline configuration
-│   ├── example_cracksegmenter.yaml  # Example CrackSegmenter configuration
-│   ├── evaluation_config.yaml  # Evaluation configuration
-│   ├── validation_metrics_config.yaml  # Validation metrics configuration
-│   └── ...
-├── src/                        # Source code
-│   ├── models/                 # Model architectures
-│   │   ├── __init__.py
-│   │   ├── cracksegmenter.py  # CrackSegmenter variants
-│   │   ├── baselines.py       # Baseline models (UNet, FCN, etc.)
-│   │   └── utils.py           # Model utilities
-│   ├── data/                   # Data handling
-│   │   ├── __init__.py
-│   │   ├── datasets.py        # Dataset classes
-│   │   ├── transforms.py      # Data augmentation
-│   │   └── loaders.py         # Data loaders
-│   ├── training/               # Training logic
-│   │   ├── __init__.py
-│   │   ├── trainer.py         # Main training loop
-│   │   ├── losses.py          # Loss functions
-│   │   └── metrics.py         # Evaluation metrics
-│   └── utils/                  # Utility functions
-│       ├── __init__.py
-│       ├── config.py          # Configuration management
-│       └── visualization.py    # Visualization tools
-├── scripts/                    # Training and evaluation scripts
-│   ├── train.py               # Main training script
-│   ├── train_ablation.py      # Ablation study training
-│   ├── evaluate.py            # Single model evaluation
-│   ├── evaluate_all.py        # Comprehensive evaluation
-│   ├── validate_metrics.py    # Validation metrics computation
-│   └── inference.py           # Inference script
-├── examples/                   # Example usage and notebooks
-│   ├── quick_start.py         # Basic usage example
-│   ├── evaluation_example.py  # Evaluation usage examples
-│   └── validation_metrics_example.py  # Validation metrics examples
-├── tests/                      # Unit tests
-│   ├── test_basic.py          # Basic functionality tests
-│   └── test_evaluation.py     # Evaluation functionality tests
-├── docs/                       # Documentation
-├── requirements.txt            # Python dependencies
-├── setup.py                   # Package setup
-├── config.yaml                # Default configuration
-└── README.md                  # This file
 ```
 
 ## 🏗️ Architecture
@@ -462,10 +409,6 @@ The model demonstrates superior performance in:
 - Handling multiple crack types
 - Real-time inference capability
 
-## 🤝 Contributing
-
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
-
 ### Development Setup
 
 ```bash
@@ -496,8 +439,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Contact
 
-- **Maintainer**: [Your Name](mailto:your.email@example.com)
-- **Project Link**: [https://github.com/yourusername/cracksegmenter](https://github.com/yourusername/cracksegmenter)
+- **Maintainer**: [Blessing Agyei Kyem](mailto:your.email@example.com)
+- **Project Link**: [https://github.com/Blessing988/cracksegmenter](https://github.com/Blessing988/cracksegmenter)
 - **Issues**: [GitHub Issues](https://github.com/yourusername/cracksegmenter/issues)
 
 ## 📚 Citation
