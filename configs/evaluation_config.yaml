@@ -1,0 +1,53 @@
+# Evaluation configuration for CrackSegmenter
+# This file configures the comprehensive evaluation script
+
+model:
+  num_classes: 1
+  nChannel: 100
+  backbone: resnet18
+  pretrained: True
+  use_cbam: True
+  use_transformer: True
+  architecture: Crack-Segmenter-v2
+  use_dice: True
+  use_bce: True
+  baseline: False
+
+data:
+  image_size: 448
+  num_workers: 4
+  mask_ext: '.png'
+
+evaluation:
+  save_masks: True          # Save predicted masks to disk
+  visualize: False          # Show visualization during evaluation
+  mask_format: '.png'       # Format for saved masks (.png, .tif, .npy)
+  compute_metrics: True     # Compute evaluation metrics
+
+utils:
+  save_dir: './evaluation_results'                    # Output directory for results
+  checkpoint_root: './trained_models'                 # Root directory for model checkpoints
+  dataset_root: './datasets'                          # Root directory for datasets
+
+# Dataset structure expected:
+# datasets/
+# ├── cracktree200/
+# │   ├── val/
+# │   │   ├── images/     # Validation images
+# │   │   └── masks/      # Ground truth masks
+# ├── cfd/
+# │   ├── val/
+# │   │   ├── images/
+# │   │   └── masks/
+# └── ...
+
+# Checkpoint structure expected:
+# trained_models/
+# ├── cracktree200/
+# │   ├── Crack-Segmenter-v2/
+# │   │   └── best_model.pth
+# │   └── Crack-Segmenter-v1/
+# │       └── best_model.pth
+# └── cfd/
+#     └── Crack-Segmenter-v2/
+#         └── best_model.pth

@@ -1,0 +1,31 @@
+# Example configuration for baseline model training
+# Set baseline=True to use standard segmentation architectures
+
+model:
+  num_classes: 1
+  nChannel: 100
+  backbone: resnet18
+  pretrained: True
+  use_cbam: False
+  use_transformer: False
+  architecture: unet  # Options: unet, fcn, deeplabv3, deeplabv3plus
+  use_dice: True
+  use_bce: True
+  baseline: True  # Set to True for baseline models
+  
+training:
+  batch_size: 8
+  num_epochs: 100
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  early_stopping_patience: 20
+
+data:
+  image_size: 448
+  root_dir: '/path/to/your/dataset'
+  dataset_name: 'cracktree200'  # Options: cracktree200, cfd, forest, gaps_384
+  num_workers: 4
+  mask_ext: '.png'
+
+utils:
+  save_dir: './trained_models/baseline'

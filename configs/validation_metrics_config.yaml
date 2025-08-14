@@ -1,0 +1,64 @@
+# Validation metrics configuration for CrackSegmenter
+# This file configures the validation metrics computation script
+
+# Paths
+paths:
+  pred_base_path: './evaluation_results/predicted_masks'  # Base path for predicted masks
+  gt_base_path: './datasets'                             # Base path for ground truth masks
+  output_dir: './validation_results'                      # Output directory for results
+
+# Models to evaluate
+models:
+  - 'Crack-Segmenter-v2'
+  - 'Crack-Segmenter-v1'
+  - 'Crack-Segmenter-v0'
+  - 'Crack-Segmenter'
+
+# Datasets to evaluate
+datasets:
+  - 'cracktree200'
+  - 'cfd'
+  - 'forest'
+  - 'gaps_384'
+  - 'volker'
+  - 'crack500'
+  - 'sylvie'
+  - 'rissbilder'
+  - 'eugen_miller'
+
+# File extensions
+file_extensions:
+  pred_ext: '*.png'  # Extension for predicted mask files
+  gt_ext: '*.png'    # Extension for ground truth mask files
+
+# Evaluation settings
+evaluation:
+  save_detailed: true     # Save detailed per-image metrics
+  threshold: 0.5          # Threshold for binary mask conversion
+  log_level: 'INFO'       # Logging level (DEBUG, INFO, WARNING, ERROR)
+
+# Expected directory structure:
+# pred_base_path/
+# ├── Crack-Segmenter-v2/
+# │   ├── cracktree200/
+# │   │   ├── image1.png
+# │   │   ├── image2.png
+# │   │   └── ...
+# │   └── cfd/
+# │       ├── image1.png
+# │       └── ...
+# └── Crack-Segmenter-v1/
+#     └── ...
+#
+# gt_base_path/
+# ├── cracktree200/
+# │   └── val/
+# │       └── masks/
+# │           ├── image1.png
+# │           ├── image2.png
+# │           └── ...
+# └── cfd/
+#     └── val/
+#         └── masks/
+#             ├── image1.png
+#             └── ...

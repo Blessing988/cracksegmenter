@@ -1,0 +1,16 @@
+#!/bin/bash
+#PBS -q gpus
+#PBS -N Train-CrackSegmenter_SAE_AGF_GAPS384
+#PBS -l select=1:mem=80gb:ncpus=8:ngpus=1:glist=a100
+#PBS -l walltime=168:00:00
+#PBS -W group_list=x-ccast-prj-aaboah
+
+# Fix path - use quotes or escape spaces
+cd "/mmfs1/projects/armstrong.aboah/PCI Prediction/self-supervised-segmentation"
+# OR better: rename directory to remove spaces
+# cd /mmfs1/projects/armstrong.aboah/PCI-Prediction/self-supervised-segmentation
+
+source /mmfs1/apps/pyenvs/anaconda3-2022.05/bin/activate base
+
+
+python train_ablation.py --config configs/gaps_384_msformer_sae_agf.yaml
