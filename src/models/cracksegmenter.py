@@ -78,7 +78,7 @@ class MSFormer_SAE_AGF(nn.Module):
         x_f, h_f, w_f = self.patch_embed_f(x)
         x_f = Rearrange('b (h w) d -> b d h w', h=h_f, w=w_f)(x_f)
         x_s, h_s, w_s = self.patch_embed_s(x)
-        x_s = Rearrange('b (h w) d -> b d h s', h=h_s, w=w_s)(x_s)
+        x_s = Rearrange('b (h w) d -> b d h w', h=h_s, w=w_s)(x_s)
         x_l, h_l, w_l = self.patch_embed_l(x)
         x_l = Rearrange('b (h w) d -> b d h w', h=h_l, w=w_l)(x_l)
         
