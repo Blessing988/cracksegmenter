@@ -18,8 +18,8 @@ training:
 
 data:
   image_size: 448
-  root_dir: '/mmfs1/projects/armstrong.aboah/Pavement-distress-segmentation/Public-Datasets'
-  dataset_name: 'CRACK500'
+  root_dir: '/path/to/dataset/root/dir'
+  dataset_name: 'crack500'
   num_workers: 4
 
 utils:
