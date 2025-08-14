@@ -391,23 +391,6 @@ Use `configs/validation_metrics_config.yaml` to configure:
 - File extensions and evaluation settings
 - Output directory and logging options
 
-## 🏆 Results
-
-### Performance Comparison
-
-| Model | Dataset | IoU | Dice | F1-Score |
-|-------|---------|-----|------|----------|
-| UNet | CrackTree200 | 0.78 | 0.87 | 0.85 |
-| CrackSegmenter-SA | CrackTree200 | 0.82 | 0.90 | 0.88 |
-| CrackSegmenter-SAE-AGF | CrackTree200 | **0.85** | **0.92** | **0.91** |
-
-### Qualitative Results
-
-The model demonstrates superior performance in:
-- Fine crack detection
-- Robustness to lighting variations
-- Handling multiple crack types
-- Real-time inference capability
 
 ### Development Setup
 
@@ -431,6 +414,7 @@ black src/ scripts/
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+<!--
 ## 🙏 Acknowledgments
 
 - Original paper authors for the foundational research
@@ -459,3 +443,4 @@ If you use this code in your research, please cite:
 ---
 
 **Star this repository if you find it useful! ⭐**
+-->
