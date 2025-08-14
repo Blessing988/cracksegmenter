@@ -168,10 +168,18 @@ The proposed architecture consists of three main components:
 
 ### Supported Datasets
 
+The framework supports the following crack segmentation datasets:
+
 - **CrackTree200**: 200 pavement crack images with annotations
-- **CFD**: Concrete crack detection dataset
+- **CFD**: Concrete crack detection dataset  
+- **CRACK500**: Large-scale crack detection dataset
+- **Volker**: Volker crack dataset
+- **GAPS384**: Generic crack dataset with 384x384 resolution
+- **Sylvie**: Sylvie crack dataset
+- **Rissbilder**: Rissbilder crack dataset
 - **Forest**: Forest crack dataset
-- **GAPS**: Generic crack dataset with 384x384 resolution
+- **Eugen_Miller**: Eugen Miller crack dataset
+- **DeepCrack**: DeepCrack dataset
 
 #### Download and Preparation
 
@@ -248,7 +256,7 @@ python scripts/evaluate.py --model_path trained_models/best_model.pth
 python scripts/evaluate_all.py --config configs/evaluation_config.yaml
 
 # Evaluate specific models on specific datasets
-python scripts/evaluate_all.py --models Crack-Segmenter-v2 Crack-Segmenter-v1 --datasets cracktree200 cfd
+python scripts/evaluate_all.py --models Crack-Segmenter-v2 Crack-Segmenter-v1 --datasets cracktree200 cfd crack500
 
 # Save predicted masks during evaluation
 python scripts/evaluate_all.py --save_masks --output_dir ./evaluation_results
@@ -260,7 +268,7 @@ python scripts/inference.py --model_path trained_models/best_model.pth --output_
 python scripts/validate_metrics.py --pred_base_path ./evaluation_results/predicted_masks --gt_base_path ./datasets
 
 # Validate specific models and datasets
-python scripts/validate_metrics.py --pred_base_path ./my_predictions --gt_base_path ./my_datasets --models Crack-Segmenter-v2 --datasets cracktree200 cfd
+python scripts/validate_metrics.py --pred_base_path ./my_predictions --gt_base_path ./my_datasets --models Crack-Segmenter-v2 --datasets cracktree200 cfd crack500
 ```
 
 ### Evaluation Features

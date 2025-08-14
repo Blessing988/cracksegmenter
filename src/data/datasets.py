@@ -179,6 +179,108 @@ class GAPSDataset(CrackDataset):
             raise RuntimeError(f"Images directory not found: {self.images_dir}")
 
 
+class CRACK500Dataset(CrackDataset):
+    """CRACK500 dataset."""
+    
+    def __init__(self, root_dir: str, split: str = 'train', transform=None):
+        super().__init__(root_dir, split, transform, mask_ext='.png')
+        
+        self.dataset_name = 'crack500'
+        
+        # CRACK500 specific validation
+        self._validate_dataset()
+    
+    def _validate_dataset(self):
+        """Validate CRACK500 dataset structure."""
+        if not os.path.exists(self.images_dir):
+            raise RuntimeError(f"Images directory not found: {self.images_dir}")
+
+
+class VolkerDataset(CrackDataset):
+    """Volker dataset."""
+    
+    def __init__(self, root_dir: str, split: str = 'train', transform=None):
+        super().__init__(root_dir, split, transform, mask_ext='.png')
+        
+        self.dataset_name = 'volker'
+        
+        # Volker specific validation
+        self._validate_dataset()
+    
+    def _validate_dataset(self):
+        """Validate Volker dataset structure."""
+        if not os.path.exists(self.images_dir):
+            raise RuntimeError(f"Images directory not found: {self.images_dir}")
+
+
+class SylvieDataset(CrackDataset):
+    """Sylvie dataset."""
+    
+    def __init__(self, root_dir: str, split: str = 'train', transform=None):
+        super().__init__(root_dir, split, transform, mask_ext='.png')
+        
+        self.dataset_name = 'sylvie'
+        
+        # Sylvie specific validation
+        self._validate_dataset()
+    
+    def _validate_dataset(self):
+        """Validate Sylvie dataset structure."""
+        if not os.path.exists(self.images_dir):
+            raise RuntimeError(f"Images directory not found: {self.images_dir}")
+
+
+class RissbilderDataset(CrackDataset):
+    """Rissbilder dataset."""
+    
+    def __init__(self, root_dir: str, split: str = 'train', transform=None):
+        super().__init__(root_dir, split, transform, mask_ext='.png')
+        
+        self.dataset_name = 'rissbilder'
+        
+        # Rissbilder specific validation
+        self._validate_dataset()
+    
+    def _validate_dataset(self):
+        """Validate Rissbilder dataset structure."""
+        if not os.path.exists(self.images_dir):
+            raise RuntimeError(f"Images directory not found: {self.images_dir}")
+
+
+class EugenMillerDataset(CrackDataset):
+    """Eugen Miller dataset."""
+    
+    def __init__(self, root_dir: str, split: str = 'train', transform=None):
+        super().__init__(root_dir, split, transform, mask_ext='.png')
+        
+        self.dataset_name = 'eugen_miller'
+        
+        # Eugen Miller specific validation
+        self._validate_dataset()
+    
+    def _validate_dataset(self):
+        """Validate Eugen Miller dataset structure."""
+        if not os.path.exists(self.images_dir):
+            raise RuntimeError(f"Images directory not found: {self.images_dir}")
+
+
+class DeepCrackDataset(CrackDataset):
+    """DeepCrack dataset."""
+    
+    def __init__(self, root_dir: str, split: str = 'train', transform=None):
+        super().__init__(root_dir, split, transform, mask_ext='.png')
+        
+        self.dataset_name = 'deepcrack'
+        
+        # DeepCrack specific validation
+        self._validate_dataset()
+    
+    def _validate_dataset(self):
+        """Validate DeepCrack dataset structure."""
+        if not os.path.exists(self.images_dir):
+            raise RuntimeError(f"Images directory not found: {self.images_dir}")
+
+
 def get_dataset(dataset_name: str, root_dir: str, split: str = 'train', 
                 transform=None) -> CrackDataset:
     """
@@ -201,6 +303,12 @@ def get_dataset(dataset_name: str, root_dir: str, split: str = 'train',
         'cfd': CFDDataset,
         'forest': ForestDataset,
         'gaps_384': GAPSDataset,
+        'crack500': CRACK500Dataset,
+        'volker': VolkerDataset,
+        'sylvie': SylvieDataset,
+        'rissbilder': RissbilderDataset,
+        'eugen_miller': EugenMillerDataset,
+        'deepcrack': DeepCrackDataset,
     }
     
     dataset_name = dataset_name.lower()

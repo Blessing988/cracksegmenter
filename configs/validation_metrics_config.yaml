@@ -25,6 +25,7 @@ datasets:
   - 'sylvie'
   - 'rissbilder'
   - 'eugen_miller'
+  - 'deepcrack'
 
 # File extensions
 file_extensions:
