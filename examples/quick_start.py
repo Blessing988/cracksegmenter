@@ -16,11 +16,11 @@ from pathlib import Path
 # Add src to path
 sys.path.append(str(Path(__file__).parent.parent / 'src'))
 
-from utils.config import load_config, get_default_config, create_config_file
-from models import create_model
-from data.loaders import create_dataloaders
-from training.losses import get_loss_function
-from training.metrics import evaluate_metrics, print_metrics
+from src.utils.config import load_config, get_default_config, create_config_file
+from src.models import create_model
+from src.data.loaders import create_dataloaders
+from src.training.losses import get_loss_function
+from src.training.metrics import evaluate_metrics, print_metrics
 import torch
 
 

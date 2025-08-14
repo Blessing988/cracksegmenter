@@ -15,7 +15,7 @@ import torch
 # Add src to path
 sys.path.append(str(Path(__file__).parent.parent / 'src'))
 
-from training.metrics import calculate_xor_metric, calculate_hm_metric
+from src.training.metrics import calculate_xor_metric, calculate_hm_metric
 
 
 class TestValidationMetrics(unittest.TestCase):

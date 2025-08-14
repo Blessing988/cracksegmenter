@@ -19,11 +19,11 @@ class TestPackageStructure(unittest.TestCase):
     def test_imports(self):
         """Test that all modules can be imported."""
         try:
-            from models import create_model
-            from data.loaders import create_dataloaders
-            from training.losses import get_loss_function
-            from training.metrics import evaluate_metrics
-            from utils.config import load_config
+            from src.models import create_model
+            from src.data.loaders import create_dataloaders
+            from src.training.losses import get_loss_function
+            from src.training.metrics import evaluate_metrics
+            from src.utils.config import load_config
             print("✅ All modules imported successfully")
         except ImportError as e:
             self.fail(f"Failed to import modules: {e}")
@@ -31,7 +31,7 @@ class TestPackageStructure(unittest.TestCase):
     def test_model_creation(self):
         """Test that models can be created."""
         try:
-            from models import create_model
+            from src.models import create_model
             import torch
             
             # Test CrackSegmenter model creation
@@ -50,7 +50,7 @@ model = create_model('Crack-Segmenter-v2', input_dim=3, embed_size=100)
     def test_loss_functions(self):
         """Test that loss functions can be created."""
         try:
-            from training.losses import get_loss_function
+            from src.training.losses import get_loss_function
             
             # Test different loss functions
             bce_loss = get_loss_function('bce')
@@ -69,7 +69,7 @@ model = create_model('Crack-Segmenter-v2', input_dim=3, embed_size=100)
     def test_config_utilities(self):
         """Test configuration utilities."""
         try:
-            from utils.config import get_default_config, validate_config
+            from src.utils.config import get_default_config, validate_config
             
             # Test default config
             config = get_default_config()
@@ -89,7 +89,7 @@ model = create_model('Crack-Segmenter-v2', input_dim=3, embed_size=100)
     def test_transforms(self):
         """Test data transforms."""
         try:
-            from data.transforms import get_transforms, get_training_transforms
+            from src.data.transforms import get_transforms, get_training_transforms
             
             # Test transform creation
             train_transforms = get_training_transforms(448)
@@ -107,7 +107,7 @@ class TestModelArchitectures(unittest.TestCase):
     def test_cracksegmenter_architectures(self):
         """Test CrackSegmenter architecture variants."""
         try:
-            from models.cracksegmenter import (
+            from src.models.cracksegmenter import (
                 MSFormer_SAE_AGF, MSFormer_SAE, MSFormer_AGF,
                 MSFormer_v1, MSFormer_v2, MSFormer_v3
             )
