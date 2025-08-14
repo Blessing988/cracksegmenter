@@ -71,7 +71,7 @@ class MSFormer_SAE_AGF(nn.Module):
         )
         
         # Final prediction
-        self.linear_down = nn.Linear(self.dim, 100, bias=False)  # nChannel from config
+        self.linear_down = nn.Linear(self.dim, 1, bias=False)  # Single channel for binary segmentation
     
     def forward(self, x):
         # Three-scale embeddings
@@ -139,7 +139,7 @@ class MSFormer_SAE(nn.Module):
         
         # Simple fusion without attention
         self.fusion_conv = nn.Conv2d(3 * self.dim, self.dim, kernel_size=1)
-        self.linear_down = nn.Linear(self.dim, 100, bias=False)
+        self.linear_down = nn.Linear(self.dim, 1, bias=False)
     
     def forward(self, x):
         # Extract multi-scale features
@@ -182,7 +182,7 @@ class MSFormer_AGF(nn.Module):
         self.attention = nn.MultiheadAttention(self.dim, num_heads=8, batch_first=True)
         
         # Final prediction
-        self.linear_down = nn.Linear(self.dim, 100, bias=False)
+        self.linear_down = nn.Linear(self.dim, 1, bias=False)
     
     def forward(self, x):
         # Single-scale embedding
@@ -217,7 +217,7 @@ class MSFormer_v1(nn.Module):
         
         # Simple fusion
         self.fusion = nn.Conv2d(2 * self.dim, self.dim, kernel_size=1)
-        self.linear_down = nn.Linear(self.dim, 100, bias=False)
+        self.linear_down = nn.Linear(self.dim, 1, bias=False)
     
     def forward(self, x):
         # Extract features at two scales
@@ -264,7 +264,7 @@ class MSFormer_v2(nn.Module):
         
         # Fusion
         self.fusion = nn.Conv2d(3 * self.dim, self.dim, kernel_size=1)
-        self.linear_down = nn.Linear(self.dim, 100, bias=False)
+        self.linear_down = nn.Linear(self.dim, 1, bias=False)
     
     def forward(self, x):
         # Extract and process features
@@ -323,7 +323,7 @@ class MSFormer_v3(nn.Module):
         self.fusion_conv = nn.Conv2d(3 * self.dim, self.dim, kernel_size=1)
         
         # Final prediction
-        self.linear_down = nn.Linear(self.dim, 100, bias=False)
+        self.linear_down = nn.Linear(self.dim, 1, bias=False)
     
     def forward(self, x):
         # Extract and process features
