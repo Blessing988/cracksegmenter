@@ -286,7 +286,7 @@ python scripts/validate_metrics.py --pred_base_path ./my_predictions --gt_base_p
 
 ### Expected Directory Structure
 
-```
+```bash
 project_root/
 ├── trained_models/              # Model checkpoints
 │   ├── cracktree200/
@@ -314,7 +314,7 @@ project_root/
         │   └── Crack-Segmenter-v2/
         └── cfd/
             └── Crack-Segmenter-v2/
-
+```
 ## 🔍 Validation Metrics
 
 ### Overview
