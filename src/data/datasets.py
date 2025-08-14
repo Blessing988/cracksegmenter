@@ -20,7 +20,7 @@ class CrackDataset(Dataset):
     """Base dataset class for crack segmentation."""
     
     def __init__(self, root_dir: str, split: str = 'train', 
-                 transform=None, mask_ext: str = '.png'):
+                 transform=None, mask_ext: str = '.png', dataset_subdir=None):
         """
         Initialize the dataset.
         
@@ -29,15 +29,23 @@ class CrackDataset(Dataset):
             split (str): Dataset split ('train', 'val', 'test')
             transform: Data augmentation transforms
             mask_ext (str): Extension for mask files
+            dataset_subdir (str): Subdirectory name for the dataset (e.g., 'CRACK500')
         """
         self.root_dir = root_dir
         self.split = split
         self.transform = transform
         self.mask_ext = mask_ext
+        self.dataset_subdir = dataset_subdir
         
-        # Setup paths
-        self.images_dir = os.path.join(root_dir, 'images', split)
-        self.masks_dir = os.path.join(root_dir, 'masks', split)
+        # Setup paths - handle both flat and subdirectory structures
+        if dataset_subdir:
+            # Subdirectory structure: root_dir/dataset_name/images/split
+            self.images_dir = os.path.join(root_dir, dataset_subdir, 'images', split)
+            self.masks_dir = os.path.join(root_dir, dataset_subdir, 'masks', split)
+        else:
+            # Flat structure: root_dir/images/split
+            self.images_dir = os.path.join(root_dir, 'images', split)
+            self.masks_dir = os.path.join(root_dir, 'masks', split)
         
         # Get file list
         self.image_files = self._get_image_files()
@@ -130,7 +138,7 @@ class CFDDataset(CrackDataset):
     """CFD (Concrete Fracture Detection) dataset."""
     
     def __init__(self, root_dir: str, split: str = 'train', transform=None):
-        super().__init__(root_dir, split, transform, mask_ext='.png')
+        super().__init__(root_dir, split, transform, mask_ext='.png', dataset_subdir='CFD')
         
         self.dataset_name = 'cfd'
         
@@ -165,7 +173,7 @@ class GAPSDataset(CrackDataset):
     """GAPS dataset with 384x384 resolution."""
     
     def __init__(self, root_dir: str, split: str = 'train', transform=None):
-        super().__init__(root_dir, split, transform, mask_ext='.png')
+        super().__init__(root_dir, split, transform, mask_ext='.png', dataset_subdir='GAPS384')
         
         self.dataset_name = 'gaps_384'
         self.target_size = (384, 384)
@@ -183,7 +191,7 @@ class CRACK500Dataset(CrackDataset):
     """CRACK500 dataset."""
     
     def __init__(self, root_dir: str, split: str = 'train', transform=None):
-        super().__init__(root_dir, split, transform, mask_ext='.png')
+        super().__init__(root_dir, split, transform, mask_ext='.png', dataset_subdir='CRACK500')
         
         self.dataset_name = 'crack500'
         
@@ -200,7 +208,7 @@ class VolkerDataset(CrackDataset):
     """Volker dataset."""
     
     def __init__(self, root_dir: str, split: str = 'train', transform=None):
-        super().__init__(root_dir, split, transform, mask_ext='.png')
+        super().__init__(root_dir, split, transform, mask_ext='.png', dataset_subdir='Volker')
         
         self.dataset_name = 'volker'
         
@@ -217,7 +225,7 @@ class SylvieDataset(CrackDataset):
     """Sylvie dataset."""
     
     def __init__(self, root_dir: str, split: str = 'train', transform=None):
-        super().__init__(root_dir, split, transform, mask_ext='.png')
+        super().__init__(root_dir, split, transform, mask_ext='.png', dataset_subdir='Sylvie')
         
         self.dataset_name = 'sylvie'
         
@@ -234,7 +242,7 @@ class RissbilderDataset(CrackDataset):
     """Rissbilder dataset."""
     
     def __init__(self, root_dir: str, split: str = 'train', transform=None):
-        super().__init__(root_dir, split, transform, mask_ext='.png')
+        super().__init__(root_dir, split, transform, mask_ext='.png', dataset_subdir='Rissbilder')
         
         self.dataset_name = 'rissbilder'
         
@@ -251,7 +259,7 @@ class EugenMillerDataset(CrackDataset):
     """Eugen Miller dataset."""
     
     def __init__(self, root_dir: str, split: str = 'train', transform=None):
-        super().__init__(root_dir, split, transform, mask_ext='.png')
+        super().__init__(root_dir, split, transform, mask_ext='.png', dataset_subdir='Eugen_Miller')
         
         self.dataset_name = 'eugen_miller'
         
@@ -268,7 +276,7 @@ class DeepCrackDataset(CrackDataset):
     """DeepCrack dataset."""
     
     def __init__(self, root_dir: str, split: str = 'train', transform=None):
-        super().__init__(root_dir, split, transform, mask_ext='.png')
+        super().__init__(root_dir, split, transform, mask_ext='.png', dataset_subdir='DeepCrack')
         
         self.dataset_name = 'deepcrack'
         
