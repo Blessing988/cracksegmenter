@@ -24,10 +24,10 @@ from typing import Dict, List, Tuple, Optional
 # Add src to path
 sys.path.append(str(Path(__file__).parent.parent / 'src'))
 
-from src.models import create_model
-from src.data.loaders import create_dataloaders
-from src.training.metrics import evaluate_metrics
-from src.utils.config import load_config
+from models import create_model
+from data.loaders import create_dataloaders
+from training.metrics import evaluate_metrics
+from utils.config import load_config
 
 
 def setup_logging(log_dir: str = None):
