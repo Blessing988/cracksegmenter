@@ -119,8 +119,6 @@ model:
   nChannel: 100
   backbone: resnet18
   pretrained: True
-  use_cbam: True
-  use_transformer: True
   architecture: Crack-Segmenter-v2  # or UNet, FCN, DeepLabV3+
   use_dice: True
   use_bce: True
@@ -155,9 +153,9 @@ data:
 
 The proposed architecture consists of three main components:
 
-1. **Scale-Aware Embedding (SAE)**: Multi-scale patch embeddings for capturing features at different resolutions
+1. **Scale-Adaptive Embedder (SAE)**: Multi-scale patch embeddings for capturing features at different resolutions
 2. **Attention-Guided Fusion (AGF)**: Attention mechanism for intelligent feature fusion
-3. **Multi-Scale Feature Integration**: Hierarchical feature combination for robust segmentation
+3. **Directional Attention Transformer (DAT)**: Preserves elongated crack geometry
 
 ### Baseline Models
 
@@ -187,11 +185,10 @@ dataset/
 ├── images/
 │   ├── train/
 │   ├── val/
-│   └── test/
+│  
 └── masks/
     ├── train/
     ├── val/
-    └── test/
 ```
 
 ## 🎯 Training
