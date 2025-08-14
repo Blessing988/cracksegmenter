@@ -281,37 +281,7 @@ python scripts/validate_metrics.py --pred_base_path ./my_predictions --gt_base_p
 4. **Run Evaluation**: Use `scripts/evaluate_all.py` for comprehensive evaluation or `scripts/evaluate.py` for single model evaluation
 5. **Analyze Results**: Review the generated CSV results and saved predicted masks
 
-### Expected Directory Structure
 
-```bash
-project_root/
-├── trained_models/              # Model checkpoints
-│   ├── cracktree200/
-│   │   ├── Crack-Segmenter-v2/
-│   │   │   └── best_model.pth
-│   │   └── Crack-Segmenter-v1/
-│   │       └── best_model.pth
-│   └── cfd/
-│       └── Crack-Segmenter-v2/
-│           └── best_model.pth
-├── datasets/                    # Validation datasets
-│   ├── cracktree200/
-│   │   └── val/
-│   │       ├── images/         # Validation images
-│   │       └── masks/          # Ground truth masks
-│   └── cfd/
-│       └── val/
-│           ├── images/
-│           └── masks/
-└── evaluation_results/          # Output directory
-    ├── evaluation_results.csv   # Results summary
-    ├── evaluation.log          # Evaluation logs
-    └── predicted_masks/        # Saved predicted masks
-        ├── cracktree200/
-        │   └── Crack-Segmenter-v2/
-        └── cfd/
-            └── Crack-Segmenter-v2/
-```
 ## 🔍 Validation Metrics
 
 ### Overview
@@ -346,39 +316,7 @@ python scripts/validate_metrics.py --pred_base_path ./evaluation_results/predict
 python scripts/validate_metrics.py --pred_base_path ./evaluation_results/predicted_masks --gt_base_path ./datasets --output_dir ./my_validation_results
 ```
 
-### Expected Directory Structure
 
-```
-project_root/
-├── evaluation_results/
-│   └── predicted_masks/        # Predicted masks from evaluation
-│       ├── Crack-Segmenter-v2/
-│       │   ├── cracktree200/
-│       │   │   ├── image1.png
-│       │   │   └── image2.png
-│       │   └── cfd/
-│       │       ├── image1.png
-│       │       └── image2.png
-│       └── Crack-Segmenter-v1/
-│           └── ...
-├── datasets/                    # Ground truth datasets
-│   ├── cracktree200/
-│   │   └── val/
-│   │       └── masks/
-│   │           ├── image1.png
-│   │           ├── image2.png
-│   │           └── ...
-│   └── cfd/
-│       └── val/
-│           └── masks/
-│               ├── image1.png
-│               └── image2.png
-└── validation_results/          # Output directory
-    ├── validation_metrics_summary.csv      # Summary results
-    ├── validation_metrics_detailed.csv     # Detailed per-image results
-    ├── model_performance_summary.csv       # Model performance analysis
-    └── dataset_difficulty_analysis.csv     # Dataset difficulty analysis
-```
 
 ### Configuration
 
