@@ -21,7 +21,7 @@ from typing import Dict, List, Tuple, Optional
 # Add src to path
 sys.path.append(str(Path(__file__).parent.parent / 'src'))
 
-from training.metrics import calculate_iou, calculate_dice, calculate_xor_metric, calculate_hm_metric
+from src.training.metrics import calculate_iou, calculate_dice, calculate_xor_metric, calculate_hm_metric
 
 
 def setup_logging(log_level: str = 'INFO'):

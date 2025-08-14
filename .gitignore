@@ -173,7 +173,6 @@ predictions/
 
 # Data files
 datasets/
-data/
 *.jpg
 *.jpeg
 *.png
