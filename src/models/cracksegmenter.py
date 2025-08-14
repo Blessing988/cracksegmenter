@@ -66,7 +66,7 @@ class MSFormer_SAE_AGF(nn.Module):
         
         # Attention-based fusion module (AGF)
         self.attention_fusion = nn.Sequential(
-            nn.Conv2d(6 * self.dim, 3, kernel_size=1),
+            nn.Conv2d(3 * self.dim, 3, kernel_size=1),
             nn.Sigmoid()
         )
         
