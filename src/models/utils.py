@@ -91,10 +91,19 @@ class EfficientTransformerBlock(nn.Module):
 class EfficientTransformerBlock_v2(nn.Module):
     """Enhanced efficient transformer block for CrackSegmenter v1/v2."""
     
-    def __init__(self, dim, num_heads=8, mlp_ratio=4., qkv_bias=False, 
+    def __init__(self, dim, num_heads=None, mlp_ratio=4., qkv_bias=False, 
                  drop=0., attn_drop=0., drop_path=0., act_layer=nn.GELU, 
                  norm_layer=nn.LayerNorm):
         super().__init__()
+        
+        # Auto-adjust num_heads to be compatible with dim
+        if num_heads is None:
+            # Find the largest divisor of dim that's reasonable for attention heads
+            possible_heads = [1, 2, 4, 5, 8, 10, 20, 25, 50, 100]
+            num_heads = 1
+            for head in possible_heads:
+                if dim % head == 0 and head <= dim:
+                    num_heads = head
         
         self.norm1 = norm_layer(dim)
         self.attn = nn.MultiheadAttention(

@@ -319,7 +319,12 @@ class MSFormer_v3(nn.Module):
         self.transformer_l = EfficientTransformerBlock_v2(self.dim)
         
         # Advanced fusion with attention
-        self.fusion_attention = nn.MultiheadAttention(self.dim, num_heads=8, batch_first=True)
+        # Auto-adjust num_heads to be compatible with dim
+        fusion_heads = 1
+        for head in [1, 2, 4, 5, 8, 10, 20, 25, 50, 100]:
+            if self.dim % head == 0 and head <= self.dim:
+                fusion_heads = head
+        self.fusion_attention = nn.MultiheadAttention(self.dim, num_heads=fusion_heads, batch_first=True)
         self.fusion_conv = nn.Conv2d(3 * self.dim, self.dim, kernel_size=1)
         
         # Final prediction
